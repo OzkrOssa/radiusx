@@ -63,7 +63,7 @@ func New() (*Container, error) {
 	}
 	transport := &Transport{
 		Env:  os.Getenv("APP_ENV"),
-		Host: os.Getenv("TRANSPORT_ENV"),
+		Host: os.Getenv("TRANSPORT_HOST"),
 		Port: os.Getenv("TRANSPORT_PORT"),
 	}
 	return &Container{
