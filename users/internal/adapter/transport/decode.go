@@ -100,3 +100,26 @@ func decodeUpdateUserRequest(_ context.Context, request interface{}) (interface{
 
 	return req, nil
 }
+
+func decodeDeleteUserRequest(_ context.Context, request interface{}) (interface{}, error) {
+	req, ok := request.(*usersv1.DeleteUserRequest)
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid payload from client")
+	}
+
+	validator, err := protovalidate.New(
+		protovalidate.WithMessages(
+			&usersv1.DeleteUserRequest{},
+		),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := validator.Validate(req); err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}

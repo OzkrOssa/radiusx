@@ -83,6 +83,8 @@ func (g *grpcTransport) UpdateUser(ctx context.Context, request *usersv1.UpdateU
 		switch err {
 		case domain.ErrorDataNotFound:
 			return nil, status.Errorf(codes.NotFound, err.Error())
+		case domain.ErrorNoUpdatedData:
+			return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 		case domain.ErrorInternal:
 			return nil, status.Errorf(codes.Internal, err.Error())
 		default:
@@ -93,5 +95,17 @@ func (g *grpcTransport) UpdateUser(ctx context.Context, request *usersv1.UpdateU
 	return resp.(*usersv1.UpdateUserResponse), nil
 }
 func (g *grpcTransport) DeleteUser(ctx context.Context, request *usersv1.DeleteUserRequest) (*usersv1.DeleteUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+	_, resp, err := g.DeleteUserHandler.ServeGRPC(ctx, request)
+	if err != nil {
+		switch err {
+		case domain.ErrorDataNotFound:
+			return nil, status.Errorf(codes.NotFound, err.Error())
+		case domain.ErrorInternal:
+			return nil, status.Errorf(codes.Internal, err.Error())
+		default:
+			return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		}
+	}
+
+	return resp.(*usersv1.DeleteUserResponse), nil
 }

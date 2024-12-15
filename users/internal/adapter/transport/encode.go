@@ -2,7 +2,6 @@ package transport
 
 import (
 	"context"
-	"strings"
 
 	usersv1 "github.com/OzkrOssa/radiusx-users/gen/users/v1"
 	"github.com/OzkrOssa/radiusx-users/internal/core/domain"
@@ -17,14 +16,12 @@ func encodeRegisterResponse(_ context.Context, request interface{}) (response in
 		return nil, status.Errorf(codes.Internal, "invalid type from endpoint")
 	}
 
-	role := strings.Join([]string{"ROLE", strings.ToUpper(string(req.Role))}, "_")
-
 	registerResponse := &usersv1.RegisterResponse{
 		User: &usersv1.User{
 			Id:        req.ID,
 			Name:      req.Name,
 			Email:     req.Email,
-			Role:      usersv1.Role(usersv1.Role_value[role]),
+			Role:      usersv1.Role(usersv1.Role_value[string(req.Role)]),
 			CreatedAt: timestamppb.New(req.CreatedAt),
 			UpdatedAt: timestamppb.New(req.UpdatedAt),
 		},
@@ -40,14 +37,12 @@ func encodeGetUserResponse(_ context.Context, request interface{}) (response int
 		return nil, status.Errorf(codes.Internal, "invalid type from endpoint")
 	}
 
-	role := strings.Join([]string{"ROLE", strings.ToUpper(string(req.Role))}, "_")
-
 	registerResponse := &usersv1.GetUserResponse{
 		User: &usersv1.User{
 			Id:        req.ID,
 			Name:      req.Name,
 			Email:     req.Email,
-			Role:      usersv1.Role(usersv1.Role_value[role]),
+			Role:      usersv1.Role(usersv1.Role_value[string(req.Role)]),
 			CreatedAt: timestamppb.New(req.CreatedAt),
 			UpdatedAt: timestamppb.New(req.UpdatedAt),
 		},
@@ -66,12 +61,11 @@ func encodeListUsersResponse(_ context.Context, request interface{}) (response i
 	var pbUsers []*usersv1.User
 
 	for _, du := range req {
-		role := strings.Join([]string{"ROLE", strings.ToUpper(string(du.Role))}, "_")
 		u := &usersv1.User{
 			Id:        du.ID,
 			Name:      du.Email,
 			Email:     du.Email,
-			Role:      usersv1.Role(usersv1.Role_value[role]),
+			Role:      usersv1.Role(usersv1.Role_value[string(du.Role)]),
 			CreatedAt: timestamppb.New(du.CreatedAt),
 			UpdatedAt: timestamppb.New(du.UpdatedAt),
 		}
@@ -93,14 +87,12 @@ func encodeUpdateUserResponse(_ context.Context, request interface{}) (response 
 		return nil, status.Errorf(codes.Internal, "invalid type from endpoint")
 	}
 
-	role := strings.Join([]string{"ROLE", strings.ToUpper(string(req.Role))}, "_")
-
 	updateUserResponse := &usersv1.RegisterResponse{
 		User: &usersv1.User{
 			Id:        req.ID,
 			Name:      req.Name,
 			Email:     req.Email,
-			Role:      usersv1.Role(usersv1.Role_value[role]),
+			Role:      usersv1.Role(usersv1.Role_value[string(req.Role)]),
 			CreatedAt: timestamppb.New(req.CreatedAt),
 			UpdatedAt: timestamppb.New(req.UpdatedAt),
 		},
@@ -108,4 +100,8 @@ func encodeUpdateUserResponse(_ context.Context, request interface{}) (response 
 
 	return updateUserResponse, nil
 
+}
+
+func encodeDeleteUserResponse(_ context.Context, _ interface{}) (response interface{}, err error) {
+	return &usersv1.DeleteUserResponse{}, nil
 }
